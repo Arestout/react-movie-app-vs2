@@ -8,18 +8,24 @@ export default class App extends React.Component {
 
         this.state = {
             filters: {
-                sort_by: 'popularity.desc'
+                sort_by: 'popularity.desc',
+                year: 'default',
+                with_genres: []
             },
-            page: 1
+            page: 1,
+            totalPages: ''
         };
     }
 
+    setTotalPages = totalPages => {
+        this.setState({ totalPages });
+    };
+
     onChangeFilters = event => {
-        const value = event.target.value;
-        const name = event.target.name;
-        this.setState(prevState => ({
+        const { name, value } = event.target;
+        this.setState(state => ({
             filters: {
-                ...prevState.filters,
+                ...state.filters,
                 [name]: value
             }
         }));
@@ -31,20 +37,33 @@ export default class App extends React.Component {
         });
     };
 
+    resetFilters = () => {
+        this.setState({
+            filters: {
+                sort_by: 'popularity.desc',
+                year: 'default',
+                with_genres: []
+            },
+            page: 1
+        });
+    };
+
     render() {
-        const { filters, page } = this.state;
+        const { filters, page, totalPages } = this.state;
         return (
             <div className="container">
                 <div className="row mt-4">
                     <div className="col-4">
                         <div className="card" style={{ width: '100%' }}>
                             <div className="card-body">
-                                <h3>Фильтры:</h3>
+                                <h3>Filters:</h3>
                                 <Filters
                                     filters={filters}
                                     page={page}
+                                    totalPages={totalPages}
                                     onChangeFilters={this.onChangeFilters}
                                     onChangePage={this.onChangePage}
+                                    resetFilters={this.resetFilters}
                                 />
                             </div>
                         </div>
@@ -54,6 +73,7 @@ export default class App extends React.Component {
                             filters={filters}
                             page={page}
                             onChangePage={this.onChangePage}
+                            setTotalPages={this.setTotalPages}
                         />
                     </div>
                 </div>

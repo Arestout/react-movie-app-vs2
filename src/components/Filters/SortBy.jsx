@@ -16,20 +16,47 @@ export default class SortBy extends Component {
         ]
     };
 
+    generateYearOptions = (start, end) => {
+        const length = end - start + 1;
+        return Array.from({ length }, (_, i) => start + i);
+    };
+
     render() {
-        const { sort_by, onChangeFilters, options } = this.props;
+        const { sort_by, onChangeFilters, options, year } = this.props;
+        const yearOptions = this.generateYearOptions(1950, 2025);
+
         return (
             <div className="form-group">
                 <label htmlFor="sort_by">Sort by:</label>
                 <select
                     id="sort_by"
-                    className="form-control"
+                    className="form-control mb-2"
                     name="sort_by"
                     value={sort_by}
                     onChange={onChangeFilters}
                 >
                     {options.map(option => (
-                        <option value={option.value}>{option.label}</option>
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+
+                <label htmlFor="year">Year:</label>
+                <select
+                    id="year"
+                    className="form-control"
+                    name="year"
+                    value={year}
+                    onChange={onChangeFilters}
+                >
+                    <option key="default" value="">
+                        All
+                    </option>
+                    {yearOptions.map(year => (
+                        <option key={year} value={year}>
+                            {year}
+                        </option>
                     ))}
                 </select>
             </div>

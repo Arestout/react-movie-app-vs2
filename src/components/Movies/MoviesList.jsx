@@ -7,21 +7,32 @@ export default class MovieList extends Component {
         super();
 
         this.state = {
-            movies: []
+            movies: [],
+            isLoading: false
         };
     }
 
     getMovies = (filters, page) => {
-        const { sort_by } = filters;
-        const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=ru-RU&sort_by=${sort_by}&page=${page}`;
+        this.setState({
+            isLoading: true
+        });
+        const { sort_by, year, with_genres } = filters;
+        const selectedGenres = with_genres.join(',');
+        const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=en-US&with_genres=${selectedGenres}&sort_by=${sort_by}&primary_release_year=${year}&page=${page}`;
         fetch(link)
             .then(response => {
                 return response.json();
             })
             .then(data => {
-                this.setState({
-                    movies: data.results
-                });
+                this.setState(
+                    state => ({
+                        movies: data.results,
+                        isLoading: false
+                    }),
+                    () => {
+                        this.props.setTotalPages(data.total_pages);
+                    }
+                );
             });
     };
 
@@ -36,7 +47,11 @@ export default class MovieList extends Component {
     // }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.filters.sort_by !== this.props.filters.sort_by) {
+        if (
+            prevProps.filters.sort_by !== this.props.filters.sort_by ||
+            prevProps.filters.year !== this.props.filters.year ||
+            prevProps.filters.with_genres !== this.props.filters.with_genres
+        ) {
             this.props.onChangePage(1);
             this.getMovies(this.props.filters, 1);
         }
@@ -47,17 +62,25 @@ export default class MovieList extends Component {
     }
 
     render() {
-        const { movies } = this.state;
-        console.log('filters', this.props.filters);
+        const { movies, isLoading } = this.state;
+
         return (
             <div className="row">
-                {movies.map(movie => {
-                    return (
-                        <div key={movie.id} className="col-6 mb-4">
-                            <MovieItem item={movie} />
-                        </div>
-                    );
-                })}
+                {!isLoading ? (
+                    movies.length > 0 ? (
+                        movies.map(movie => {
+                            return (
+                                <div key={movie.id} className="col-6 mb-4">
+                                    <MovieItem item={movie} />
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <h3>No results found matching your criteria</h3>
+                    )
+                ) : (
+                    <h3>Loading...</h3>
+                )}
             </div>
         );
     }
