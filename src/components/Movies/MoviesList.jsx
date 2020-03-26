@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import queryString from 'query-string';
+import { isEqual } from 'lodash';
 import MovieItem from './MovieItem';
 import { API_URL, API_KEY_3 } from '../../api/api';
 
@@ -17,12 +19,23 @@ export default class MovieList extends Component {
             isLoading: true
         });
         const { sort_by, year, with_genres } = filters;
-        const selectedGenres = with_genres.join(',');
-        const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=en-US&with_genres=${selectedGenres}&sort_by=${sort_by}&primary_release_year=${year}&page=${page}`;
+        const queryStringParam = {
+            api_key: API_KEY_3,
+            language: 'en-US',
+            sort_by,
+            page,
+            year
+        };
+        if (with_genres.length > 0) {
+            queryStringParam.with_genres = with_genres.join(',');
+        }
+
+        const link = `${API_URL}/discover/movie?${queryString.stringify(
+            queryStringParam
+        )}`;
+
         fetch(link)
-            .then(response => {
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 this.setState(
                     {
@@ -47,11 +60,7 @@ export default class MovieList extends Component {
     // }
 
     componentDidUpdate(prevProps) {
-        if (
-            prevProps.filters.sort_by !== this.props.filters.sort_by ||
-            prevProps.filters.year !== this.props.filters.year ||
-            prevProps.filters.with_genres !== this.props.filters.with_genres
-        ) {
+        if (!isEqual(prevProps.filters, this.props.filters)) {
             this.props.onChangePage(1);
             this.getMovies(this.props.filters, 1);
         }

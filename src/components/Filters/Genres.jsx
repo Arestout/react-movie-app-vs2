@@ -34,12 +34,8 @@ export default class Genres extends Component {
     componentDidMount() {
         const link = `${API_URL}/genre/movie/list?api_key=${API_KEY_3}&language=en-US&`;
         fetch(link)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                this.setState({ genres: data.genres });
-            });
+            .then(response => response.json())
+            .then(data => this.setState({ genres: data.genres }));
     }
 
     render() {
