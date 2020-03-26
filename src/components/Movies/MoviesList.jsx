@@ -25,10 +25,10 @@ export default class MovieList extends Component {
             })
             .then(data => {
                 this.setState(
-                    state => ({
+                    {
                         movies: data.results,
                         isLoading: false
-                    }),
+                    },
                     () => {
                         this.props.setTotalPages(data.total_pages);
                     }
