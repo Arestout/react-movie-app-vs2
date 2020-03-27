@@ -2,15 +2,16 @@ import React from 'react';
 import SortBy from './SortBy';
 import Pagination from './Pagination';
 import Genres from './Genres';
+import Years from './Years';
 
 export default class Filters extends React.Component {
     render() {
         const {
             filters: { sort_by, year, with_genres },
             onChangeFilters,
-            onChangePage,
+            onChangePagination,
             page,
-            totalPages,
+            total_pages,
             resetFilters
         } = this.props;
         return (
@@ -21,6 +22,8 @@ export default class Filters extends React.Component {
                     year={year}
                 />
 
+                <Years onChangeFilters={onChangeFilters} year={year} />
+
                 <Genres
                     onChangeFilters={onChangeFilters}
                     with_genres={with_genres}
@@ -28,9 +31,9 @@ export default class Filters extends React.Component {
 
                 <Pagination
                     page={page}
-                    onChangePage={onChangePage}
+                    onChangePagination={onChangePagination}
                     resetFilters={resetFilters}
-                    totalPages={totalPages}
+                    total_pages={total_pages}
                 />
             </form>
         );

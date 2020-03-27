@@ -10,25 +10,17 @@ export default class Genres extends Component {
         };
     }
 
-    handleOnChange = event => {
-        if (event.target.checked) {
-            this.props.onChangeFilters({
-                target: {
-                    name: 'with_genres',
-                    value: [...this.props.with_genres, event.target.value]
-                }
-            });
-        } else {
-            const filteredGenres = this.props.with_genres.filter(
-                genre => genre !== event.target.value
-            );
-            this.props.onChangeFilters({
-                target: {
-                    name: 'with_genres',
-                    value: filteredGenres
-                }
-            });
-        }
+    onChange = event => {
+        this.props.onChangeFilters({
+            target: {
+                name: 'with_genres',
+                value: event.target.checked
+                    ? [...this.props.with_genres, event.target.value]
+                    : this.props.with_genres.filter(
+                          genre => genre !== event.target.value
+                      )
+            }
+        });
     };
 
     componentDidMount() {
@@ -53,7 +45,7 @@ export default class Genres extends Component {
                                 name={genre.name}
                                 checked={with_genres.includes(String(genre.id))}
                                 value={genre.id}
-                                onChange={this.handleOnChange}
+                                onChange={this.onChange}
                             />
                             <label
                                 className="form-check-label"

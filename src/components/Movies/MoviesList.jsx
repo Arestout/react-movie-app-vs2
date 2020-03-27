@@ -37,15 +37,15 @@ export default class MovieList extends Component {
         fetch(link)
             .then(response => response.json())
             .then(data => {
-                this.setState(
-                    {
-                        movies: data.results,
-                        isLoading: false
-                    },
-                    () => {
-                        this.props.setTotalPages(data.total_pages);
-                    }
-                );
+                this.setState({
+                    movies: data.results,
+                    isLoading: false
+                });
+                // this.props.onChangeTotalPages(data.total_pages);
+                this.props.onChangePagination({
+                    page: data.page,
+                    total_pages: data.total_pages
+                });
             });
     };
 
@@ -61,7 +61,7 @@ export default class MovieList extends Component {
 
     componentDidUpdate(prevProps) {
         if (!isEqual(prevProps.filters, this.props.filters)) {
-            this.props.onChangePage(1);
+            this.props.onChangePagination(1);
             this.getMovies(this.props.filters, 1);
         }
 
@@ -73,22 +73,26 @@ export default class MovieList extends Component {
     render() {
         const { movies, isLoading } = this.state;
 
+        if (isLoading) {
+            return (
+                <div className="row">
+                    <h3>Loading...</h3>
+                </div>
+            );
+        }
+
         return (
             <div className="row">
-                {!isLoading ? (
-                    movies.length > 0 ? (
-                        movies.map(movie => {
-                            return (
-                                <div key={movie.id} className="col-6 mb-4">
-                                    <MovieItem item={movie} />
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <h3>No results found matching your criteria</h3>
-                    )
+                {movies.length > 0 ? (
+                    movies.map(movie => {
+                        return (
+                            <div key={movie.id} className="col-6 mb-4">
+                                <MovieItem item={movie} />
+                            </div>
+                        );
+                    })
                 ) : (
-                    <h3>Loading...</h3>
+                    <h3>No results found matching your criteria</h3>
                 )}
             </div>
         );
