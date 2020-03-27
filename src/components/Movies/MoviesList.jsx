@@ -1,64 +1,100 @@
 import React, { Component } from 'react';
+import queryString from 'query-string';
+import { isEqual } from 'lodash';
 import MovieItem from './MovieItem';
 import { API_URL, API_KEY_3 } from '../../api/api';
 
 export default class MovieList extends Component {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.state = {
-            movies: []
-        };
-    }
-
-    getMovies = (filters, page) => {
-        const { sort_by } = filters;
-        const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=ru-RU&sort_by=${sort_by}&page=${page}`;
-        fetch(link)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                this.setState({
-                    movies: data.results
-                });
-            });
+    this.state = {
+      movies: [],
+      isLoading: false,
     };
+  }
 
-    componentDidMount() {
-        this.getMovies(this.props.filters, this.props.page);
+  getMovies = (filters, page) => {
+    this.setState({
+      isLoading: true,
+    });
+    const { sort_by, year, with_genres } = filters;
+    const queryStringParam = {
+      api_key: API_KEY_3,
+      language: 'en-US',
+      sort_by,
+      page,
+      year,
+    };
+    if (with_genres.length > 0) {
+      queryStringParam.with_genres = with_genres.join(',');
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if (nextProps.sort_by !== this.props.sort_by) {
-    //         this.getMovies(nextProps.filters);
-    //     }
-    // }
+    const link = `${API_URL}/discover/movie?${queryString.stringify(
+      queryStringParam
+    )}`;
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.filters.sort_by !== this.props.filters.sort_by) {
-            this.props.onChangePage(1);
-            this.getMovies(this.props.filters, 1);
-        }
+    fetch(link)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({
+          movies: data.results,
+          isLoading: false,
+        });
+        // this.props.onChangeTotalPages(data.total_pages);
+        this.props.onChangePagination({
+          page: data.page,
+          total_pages: data.total_pages,
+        });
+      });
+  };
 
-        if (prevProps.page !== this.props.page) {
-            this.getMovies(this.props.filters, this.props.page);
-        }
+  componentDidMount() {
+    this.getMovies(this.props.filters, this.props.page);
+  }
+
+  // componentWillReceiveProps(nextProps) {
+  //     if (nextProps.sort_by !== this.props.sort_by) {
+  //         this.getMovies(nextProps.filters);
+  //     }
+  // }
+
+  componentDidUpdate(prevProps) {
+    if (!isEqual(prevProps.filters, this.props.filters)) {
+      this.props.onChangePagination(1);
+      this.getMovies(this.props.filters, 1);
     }
 
-    render() {
-        const { movies } = this.state;
-        console.log('filters', this.props.filters);
-        return (
-            <div className="row">
-                {movies.map(movie => {
-                    return (
-                        <div key={movie.id} className="col-6 mb-4">
-                            <MovieItem item={movie} />
-                        </div>
-                    );
-                })}
-            </div>
-        );
+    if (prevProps.page !== this.props.page) {
+      this.getMovies(this.props.filters, this.props.page);
     }
+  }
+
+  render() {
+    const { movies, isLoading } = this.state;
+
+    if (isLoading) {
+      return (
+        <div className="row">
+          <h3>Loading...</h3>
+        </div>
+      );
+    }
+
+    return (
+      <div className="row">
+        {movies.length > 0 ? (
+          movies.map((movie) => {
+            return (
+              <div key={movie.id} className="col-6 mb-4">
+                <MovieItem item={movie} />
+              </div>
+            );
+          })
+        ) : (
+          <h3>No results found matching your criteria</h3>
+        )}
+      </div>
+    );
+  }
 }

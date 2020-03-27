@@ -1,37 +1,38 @@
 import React from 'react';
 import SortBy from './SortBy';
+import Pagination from './Pagination';
+import Genres from './Genres';
+import Years from './Years';
 
 export default class Filters extends React.Component {
-    render() {
-        const {
-            filters: { sort_by },
-            onChangeFilters,
-            onChangePage,
-            page
-        } = this.props;
-        return (
-            <form className="mb-3">
-                <SortBy sort_by={sort_by} onChangeFilters={onChangeFilters} />
+  render() {
+    const {
+      filters: { sort_by, year, with_genres },
+      onChangeFilters,
+      onChangePagination,
+      page,
+      total_pages,
+      resetFilters,
+    } = this.props;
+    return (
+      <form className="mb-3">
+        <SortBy
+          sort_by={sort_by}
+          onChangeFilters={onChangeFilters}
+          year={year}
+        />
 
-                <div className="btn-group">
-                    <button
-                        type="button"
-                        className="btn btn-light"
-                        disabled={page === 1}
-                        onClick={onChangePage.bind(null, page - 1)}
-                    >
-                        Next
-                    </button>
+        <Years onChangeFilters={onChangeFilters} year={year} />
 
-                    <button
-                        type="button"
-                        className="btn btn-light"
-                        onClick={onChangePage.bind(null, page + 1)}
-                    >
-                        Previous
-                    </button>
-                </div>
-            </form>
-        );
-    }
+        <Genres onChangeFilters={onChangeFilters} with_genres={with_genres} />
+
+        <Pagination
+          page={page}
+          onChangePagination={onChangePagination}
+          resetFilters={resetFilters}
+          total_pages={total_pages}
+        />
+      </form>
+    );
+  }
 }
