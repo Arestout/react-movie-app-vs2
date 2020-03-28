@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import SortBy from './SortBy';
 import Pagination from './Pagination';
 import Genres from './Genres';
 import Years from './Years';
 
-export default class Filters extends React.Component {
+export default class Filters extends PureComponent {
   render() {
     const {
       filters: { sort_by, year, with_genres },
@@ -14,6 +14,7 @@ export default class Filters extends React.Component {
       total_pages,
       resetFilters,
     } = this.props;
+
     return (
       <form className="mb-3">
         <SortBy

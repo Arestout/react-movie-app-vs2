@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { API_URL, API_KEY_3 } from '../../api/api';
 
-export default class Genres extends Component {
+export default class Genres extends PureComponent {
   constructor() {
     super();
 
@@ -33,6 +33,7 @@ export default class Genres extends Component {
   render() {
     const { genres } = this.state;
     const { with_genres } = this.props;
+    console.log('Genres', 'render');
     return (
       <div className="form-group">
         {genres.map((genre) => {

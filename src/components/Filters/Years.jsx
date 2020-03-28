@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 const getYears = () =>
   Array.from(new Array(30), (_, index) => new Date().getFullYear() - index);
 
-export default class Years extends Component {
+export default class Years extends PureComponent {
   static defaultProps = {
     years: getYears(),
   };

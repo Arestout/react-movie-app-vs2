@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
-export default class Pagination extends Component {
+export default class Pagination extends PureComponent {
   nextPage = (step) => () => {
     this.props.onChangePagination({
       page: this.props.page + step,
