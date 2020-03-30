@@ -1,6 +1,13 @@
 import React, { PureComponent } from 'react';
-
+import PropTypes from 'prop-types';
 export default class Pagination extends PureComponent {
+  static propTypes = {
+    resetFilters: PropTypes.func.isRequired,
+    onChangePagination: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    total_pages: PropTypes.number.isRequired,
+  };
+
   nextPage = (step) => () => {
     this.props.onChangePagination({
       page: this.props.page + step,

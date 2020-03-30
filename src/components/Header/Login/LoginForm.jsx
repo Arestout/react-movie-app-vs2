@@ -1,35 +1,48 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { API_URL, API_KEY_3, fetchApi } from '../../../api/api';
+import UIInput from '../../UIComponents/UIInput';
 
 export default class LoginForm extends React.Component {
-  state = {
-    username: '',
-    password: '',
-    errors: {},
-    submitting: false,
+  constructor() {
+    super();
+
+    this.state = {
+      username: '',
+      password: '',
+      repeatPassword: '',
+      errors: {},
+      submitting: false,
+    };
+  }
+
+  static propTypes = {
+    updateUser: PropTypes.func.isRequired,
+    updateSessionID: PropTypes.func.isRequired,
   };
 
   onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    this.setState((prevState) => ({
+    this.setState((state) => ({
       [name]: value,
       errors: {
-        ...prevState.errors,
+        ...state.errors,
         base: null,
         [name]: null,
       },
     }));
   };
 
-  handleBlur = () => {
+  handleBlur = (e) => {
     console.log('on blur');
+    const name = e.target.name;
     const errors = this.validateFields();
     if (Object.keys(errors).length > 0) {
-      this.setState((prevState) => ({
+      this.setState((state) => ({
         errors: {
-          ...prevState.errors,
-          ...errors,
+          ...state.errors,
+          [name]: errors[name],
         },
       }));
     }
@@ -37,9 +50,18 @@ export default class LoginForm extends React.Component {
 
   validateFields = () => {
     const errors = {};
+    const { username, password, repeatPassword } = this.state;
 
-    if (this.state.username === '') {
-      errors.username = 'Not empty';
+    if (username === '') {
+      errors.username = 'Should not be empty';
+    }
+
+    if (password.length === 0) {
+      errors.password = 'Should not be empty';
+    }
+
+    if (repeatPassword.length === 0 || repeatPassword !== password) {
+      errors.repeatPassword = 'Should be equal to password';
     }
 
     return errors;
@@ -123,42 +145,53 @@ export default class LoginForm extends React.Component {
   };
 
   render() {
-    const { username, password, errors, submitting } = this.state;
+    const {
+      username,
+      password,
+      errors,
+      submitting,
+      repeatPassword,
+    } = this.state;
     return (
       <div className="form-login-container">
         <form className="form-login">
           <h1 className="h3 mb-3 font-weight-normal text-center">Log in</h1>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              className="form-control"
-              id="username"
-              placeholder="Username"
-              name="username"
-              value={username}
-              onChange={this.onChange}
-              onBlur={this.handleBlur}
-            />
-            {errors.username && (
-              <div className="invalid-feedback">{errors.username}</div>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={this.onChange}
-            />
-            {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
-            )}
-          </div>
+          <UIInput
+            type="text"
+            id="username"
+            placeholder="Username"
+            labelText="Username"
+            name="username"
+            value={username}
+            onChange={this.onChange}
+            onBlur={this.handleBlur}
+            error={errors.username}
+          />
+
+          <UIInput
+            type="password"
+            id="password"
+            placeholder="Password"
+            labelText="Password"
+            name="password"
+            value={password}
+            onChange={this.onChange}
+            onBlur={this.handleBlur}
+            error={errors.password}
+          />
+
+          <UIInput
+            type="password"
+            id="repeatPassword"
+            placeholder="Repeat password"
+            labelText="Repeat password"
+            name="repeatPassword"
+            value={repeatPassword}
+            onChange={this.onChange}
+            onBlur={this.handleBlur}
+            error={errors.repeatPassword}
+          />
+
           <button
             type="submit"
             className="btn btn-lg btn-primary btn-block"

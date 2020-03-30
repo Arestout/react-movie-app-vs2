@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { API_URL, API_KEY_3 } from '../../api/api';
 
 export default class Genres extends PureComponent {
@@ -9,6 +10,11 @@ export default class Genres extends PureComponent {
       genres: [],
     };
   }
+
+  static propTypes = {
+    onChangeFilters: PropTypes.func.isRequired,
+    with_genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  };
 
   onChange = (event) => {
     this.props.onChangeFilters({

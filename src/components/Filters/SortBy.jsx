@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import UISelect from '../UIComponents/UISelect';
 
 export default class SortBy extends PureComponent {
   static propTypes = {
@@ -18,24 +19,21 @@ export default class SortBy extends PureComponent {
 
   render() {
     const { sort_by, onChangeFilters, options } = this.props;
-    console.log('SortBy');
+
     return (
-      <div className="form-group">
-        <label htmlFor="sort_by">Sort by:</label>
-        <select
-          id="sort_by"
-          className="form-control mb-2"
-          name="sort_by"
-          value={sort_by}
-          onChange={onChangeFilters}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <UISelect
+        id="sort_by"
+        name="sort_by"
+        value={sort_by}
+        onChange={onChangeFilters}
+        labelText={'Sort by:'}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </UISelect>
     );
   }
 }
