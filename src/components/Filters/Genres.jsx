@@ -1,66 +1,38 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { API_URL, API_KEY_3 } from '../../api/api';
+import GenresHOC from './GenresHOC';
 
-export default class Genres extends PureComponent {
-  constructor() {
-    super();
+const Genres = ({ genres, with_genres, onChange }) => (
+  <div className="form-group">
+    {genres.map((genre) => {
+      return (
+        <div className="form-check" key={genre.id}>
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id={genre.name}
+            name={genre.name}
+            checked={with_genres.includes(String(genre.id))}
+            value={genre.id}
+            onChange={onChange}
+          />
+          <label className="form-check-label" htmlFor={genre.name}>
+            {genre.name}
+          </label>
+        </div>
+      );
+    })}
+  </div>
+);
 
-    this.state = {
-      genres: [],
-    };
-  }
+Genres.defaultProps = {
+  genres: [],
+};
 
-  static propTypes = {
-    onChangeFilters: PropTypes.func.isRequired,
-    with_genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  };
+Genres.propTypes = {
+  genres: PropTypes.array.isRequired,
+  with_genres: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
-  onChange = (event) => {
-    this.props.onChangeFilters({
-      target: {
-        name: 'with_genres',
-        value: event.target.checked
-          ? [...this.props.with_genres, event.target.value]
-          : this.props.with_genres.filter(
-              (genre) => genre !== event.target.value
-            ),
-      },
-    });
-  };
-
-  componentDidMount() {
-    const link = `${API_URL}/genre/movie/list?api_key=${API_KEY_3}&language=en-US&`;
-    fetch(link)
-      .then((response) => response.json())
-      .then((data) => this.setState({ genres: data.genres }));
-  }
-
-  render() {
-    const { genres } = this.state;
-    const { with_genres } = this.props;
-    console.log('Genres', 'render');
-    return (
-      <div className="form-group">
-        {genres.map((genre) => {
-          return (
-            <div className="form-check" key={genre.id}>
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id={genre.name}
-                name={genre.name}
-                checked={with_genres.includes(String(genre.id))}
-                value={genre.id}
-                onChange={this.onChange}
-              />
-              <label className="form-check-label" htmlFor={genre.name}>
-                {genre.name}
-              </label>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-}
+export default GenresHOC(Genres);

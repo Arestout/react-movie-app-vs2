@@ -5,7 +5,10 @@ export default class Pagination extends PureComponent {
     resetFilters: PropTypes.func.isRequired,
     onChangePagination: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
-    total_pages: PropTypes.number.isRequired,
+  };
+
+  static defaultProps = {
+    page: 1,
   };
 
   nextPage = (step) => () => {
@@ -24,6 +27,7 @@ export default class Pagination extends PureComponent {
 
   render() {
     const { page, resetFilters, total_pages } = this.props;
+
     return (
       <>
         <div className="mb-4 row justify-content-center">

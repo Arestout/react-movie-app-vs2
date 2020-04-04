@@ -7,7 +7,7 @@ export default class Login extends Component {
     super();
 
     this.state = {
-      showModal: false,
+      showModal: true,
     };
   }
 
@@ -29,10 +29,7 @@ export default class Login extends Component {
         </button>
         <Modal isOpen={this.state.showModal} toggle={this.toggleModal}>
           <ModalBody>
-            <LoginForm
-              updateUser={this.props.updateUser}
-              updateSessionID={this.props.updateSessionID}
-            />
+            <LoginForm />
           </ModalBody>
         </Modal>
       </div>

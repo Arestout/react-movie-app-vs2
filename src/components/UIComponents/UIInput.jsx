@@ -10,6 +10,8 @@ export default class UIInput extends Component {
     onChange: PropTypes.func.isRequired,
   };
 
+  getClassForInput = (error) => classNames('form-control', { invalid: error });
+
   render() {
     const {
       type,
@@ -27,7 +29,7 @@ export default class UIInput extends Component {
         <label htmlFor={id}>{labelText}</label>
         <input
           type={type}
-          className={classNames('form-control', { invalid: error })}
+          className={this.getClassForInput(error)}
           id={id}
           placeholder={placeholder}
           name={name}
