@@ -149,10 +149,6 @@ export default class App extends React.Component {
         this.getFavoriteMovies();
         this.getWatchListMovies();
       });
-    } else {
-      this.setState((state) => ({
-        showLoginModal: !state.showLoginModal,
-      }));
     }
   }
 
