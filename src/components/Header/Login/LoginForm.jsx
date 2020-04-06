@@ -134,7 +134,12 @@ class LoginForm extends React.Component {
           {
             submitting: false,
           },
-          () => this.props.updateUser(user)
+          () => {
+            this.props.updateUser(user);
+            this.props.toggleLoginModal();
+            this.props.getFavoriteMovies();
+            this.props.getWatchListMovies();
+          }
         );
       })
       .catch((error) => {

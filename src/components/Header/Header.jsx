@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Login from './Login/Login';
 import UserMenu from './UserMenu';
+import AppContextHOC from '../HOC/AppContextHOC';
 
-export default class Header extends Component {
+class Header extends Component {
   render() {
-    const { user } = this.props;
+    const { user, toggleLoginModal } = this.props;
     return (
       <nav className="navbar navbar-dark bg-primary">
         <div className="container">
@@ -15,9 +15,21 @@ export default class Header extends Component {
               </a>
             </li>
           </ul>
-          {user ? <UserMenu /> : <Login user={user} />}
+          {user ? (
+            <UserMenu />
+          ) : (
+            <button
+              className="btn btn-success"
+              type="button"
+              onClick={toggleLoginModal}
+            >
+              Login
+            </button>
+          )}
         </div>
       </nav>
     );
   }
 }
+
+export default AppContextHOC(Header);

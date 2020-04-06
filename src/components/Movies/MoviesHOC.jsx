@@ -9,8 +9,6 @@ export default (Component) =>
 
       this.state = {
         movies: [],
-        favoriteMovies: [],
-        watchList: [],
         isLoading: false,
       };
     }
@@ -45,113 +43,6 @@ export default (Component) =>
       });
     };
 
-    // getFavoriteMovies = () => {
-    //   CallApi.get('/account/{account_id}/favorite/movies', {
-    //     params: {
-    //       session_id: this.props.session_id,
-    //     },
-    //   }).then((data) => {
-    //     this.setState({
-    //       favoriteMovies: data.results,
-    //     });
-    //   });
-    // };
-
-    // getWatchList = () => {
-    //   CallApi.get('/account/{account_id}/watchlist/movies', {
-    //     params: {
-    //       session_id: this.props.session_id,
-    //     },
-    //   }).then((data) => {
-    //     this.setState({
-    //       watchList: data.results,
-    //     });
-    //   });
-    // };
-
-    getFavoritesAndWatchlist = (url, list) => {
-      CallApi.get(url, {
-        params: {
-          session_id: this.props.session_id,
-        },
-      }).then((data) => {
-        this.setState({
-          [list]: data.results,
-        });
-      });
-    };
-
-    handleAddingMovies = (args) => {
-      const { url, movieId, name, action } = args;
-      const queryStringParams = {
-        media_type: 'movie',
-        media_id: movieId,
-        [name]: action,
-      };
-      console.log(movieId);
-      CallApi.post(url, {
-        params: {
-          session_id: this.props.session_id,
-        },
-        body: queryStringParams,
-      });
-    };
-
-    addToFavorites = (movie) => {
-      let action = this.state.favoriteMovies.some(
-        (favMovie) => favMovie.id === movie.id
-      )
-        ? false
-        : true;
-
-      this.handleAddingMovies({
-        url: '/account/{account_id}/favorite',
-        movieId: movie.id,
-        name: 'favorite',
-        action: action,
-      });
-      let updateFavoriteMovies = [];
-
-      if (action) {
-        updateFavoriteMovies = [...this.state.favoriteMovies];
-        updateFavoriteMovies.push(movie);
-      } else {
-        updateFavoriteMovies = this.state.favoriteMovies.filter(
-          (favMovie) => favMovie.id !== movie.id
-        );
-      }
-
-      this.setState({
-        favoriteMovies: updateFavoriteMovies,
-      });
-    };
-
-    addToWatchlist = (movie) => {
-      let action = this.state.watchList.some(
-        (watchMovie) => watchMovie.id === movie.id
-      )
-        ? false
-        : true;
-
-      this.handleAddingMovies({
-        url: '/account/{account_id}/watchlist',
-        movieId: movie.id,
-        name: 'watchlist',
-        action: action,
-      });
-      const updateWatchList = [...this.state.watchList];
-
-      action
-        ? this.state.watchList.filter(
-            (watchMovie) => watchMovie.id !== movie.id
-          )
-        : updateWatchList.push(movie);
-
-      this.setState({
-        willWatch: updateWatchList,
-      });
-    };
-
     componentDidMount() {
       this.getMovies(this.props.filters, this.props.page);
     }
@@ -165,28 +56,10 @@ export default (Component) =>
       if (prevProps.page !== this.props.page) {
         this.getMovies(this.props.filters, this.props.page);
       }
-
-      if (prevProps.session_id !== this.props.session_id) {
-        this.getFavoritesAndWatchlist(
-          '/account/{account_id}/favorite/movies',
-          'favoriteMovies'
-        );
-        this.getFavoritesAndWatchlist(
-          '/account/{account_id}/watchlist/movies',
-          'watchList'
-        );
-
-        if (!this.props.session_id) {
-          this.setState({
-            favoriteMovies: [],
-            watchList: [],
-          });
-        }
-      }
     }
 
     render() {
-      const { movies, favoriteMovies, watchList, isLoading } = this.state;
+      const { movies, isLoading } = this.state;
 
       if (isLoading) {
         return (
@@ -196,15 +69,6 @@ export default (Component) =>
         );
       }
 
-      return (
-        <Component
-          movies={movies}
-          favoriteMovies={favoriteMovies}
-          watchList={watchList}
-          addToFavorites={this.addToFavorites}
-          addToWatchlist={this.addToWatchlist}
-          getFavoritesAndWatchlist={this.getFavoritesAndWatchlist}
-        />
-      );
+      return <Component movies={movies} />;
     }
   };

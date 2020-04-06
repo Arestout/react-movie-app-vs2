@@ -18,21 +18,6 @@ export default class Login extends Component {
   };
 
   render() {
-    return (
-      <div>
-        <button
-          className="btn btn-success"
-          type="button"
-          onClick={this.toggleModal}
-        >
-          Login
-        </button>
-        <Modal isOpen={this.state.showModal} toggle={this.toggleModal}>
-          <ModalBody>
-            <LoginForm />
-          </ModalBody>
-        </Modal>
-      </div>
-    );
+    return <div></div>;
   }
 }
