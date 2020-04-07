@@ -5,9 +5,7 @@ import MoviesList from './Movies/MoviesList';
 import { API_URL, API_KEY_3, fetchApi } from '../api/api';
 import Cookies from 'universal-cookie';
 import CallApi from '../api/api';
-import { Modal, ModalBody } from 'reactstrap';
-import LoginForm from './Header/Login/LoginForm';
-import { isEqual } from 'lodash';
+import LoginModal from './Header/Login/LoginModal';
 
 const cookies = new Cookies();
 export const AppContext = React.createContext();
@@ -49,7 +47,7 @@ export default class App extends React.Component {
     });
   };
 
-  updateSessionID = (session_id) => {
+  updateSessionId = (session_id) => {
     cookies.set('session_id', session_id, {
       path: '/',
       maxAge: 2592000,
@@ -76,10 +74,10 @@ export default class App extends React.Component {
     });
   };
 
-  getFavoriteMovies = () => {
-    CallApi.get('/account/{account_id}/favorite/movies', {
+  getFavoriteMovies = ({ session_id, user }) => {
+    return CallApi.get(`/account/${user.id}/favorite/movies`, {
       params: {
-        session_id: this.state.session_id,
+        session_id: session_id,
       },
     }).then((data) => {
       this.setState({
@@ -88,29 +86,10 @@ export default class App extends React.Component {
     });
   };
 
-  addToFavorites = (movie) => {
-    const isFavorite = this.state.favoriteMovies.some(
-      (favMovie) => favMovie.id === movie.id
-    );
-
-    const queryStringParams = {
-      media_type: 'movie',
-      media_id: movie.id,
-      favorite: !isFavorite,
-    };
-
-    CallApi.post('/account/{account_id}/favorite', {
+  getWatchListMovies = ({ session_id, user }) => {
+    return CallApi.get(`/account/${user.id}/watchlist/movies`, {
       params: {
-        session_id: this.state.session_id,
-      },
-      body: queryStringParams,
-    }).then(() => this.getFavoriteMovies());
-  };
-
-  getWatchListMovies = () => {
-    CallApi.get('/account/{account_id}/watchlist/movies', {
-      params: {
-        session_id: this.state.session_id,
+        session_id: session_id,
       },
     }).then((data) => {
       this.setState({
@@ -119,47 +98,29 @@ export default class App extends React.Component {
     });
   };
 
-  addToWatchlist = (movie) => {
-    const isWatchlist = this.state.watchListMovies.some(
-      (watchMovie) => watchMovie.id === movie.id
-    );
-
-    const queryStringParams = {
-      media_type: 'movie',
-      media_id: movie.id,
-      watchlist: !isWatchlist,
-    };
-
-    CallApi.post('/account/{account_id}/watchlist', {
-      params: {
-        session_id: this.state.session_id,
-      },
-      body: queryStringParams,
-    }).then(() => this.getWatchListMovies());
-  };
-
   componentDidMount() {
     const session_id = cookies.get('session_id');
     if (session_id) {
       fetchApi(
         `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
       ).then((user) => {
+        this.updateSessionId(session_id);
         this.updateUser(user);
-        this.updateSessionID(session_id);
-        this.getFavoriteMovies();
-        this.getWatchListMovies();
       });
     }
   }
 
-  componentDidUpdate(prevProps) {
-    // if (prevProps.session_id !== this.props.session_id) {
-    //   this.getFavoriteMovies();
-    //   this.getWatchListMovies();
-    // }
-    // if (!isEqual(prevProps.favoriteMovies, this.state.favoriteMovies)) {
-    //   this.getFavoriteMovies();
-    // }
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.user && this.state.user && this.state.session_id) {
+      this.getFavoriteMovies({
+        session_id: this.state.session_id,
+        user: this.state.user,
+      });
+      this.getWatchListMovies({
+        session_id: this.state.session_id,
+        user: this.state.user,
+      });
+    }
   }
 
   toggleLoginModal = () => {
@@ -188,12 +149,10 @@ export default class App extends React.Component {
           user: user,
           session_id: session_id,
           updateUser: this.updateUser,
-          updateSessionID: this.updateSessionID,
+          updateSessionId: this.updateSessionId,
           onLogOut: this.onLogOut,
           favoriteMovies: favoriteMovies,
           watchListMovies: watchListMovies,
-          addToFavorites: this.addToFavorites,
-          addToWatchlist: this.addToWatchlist,
           getFavoriteMovies: this.getFavoriteMovies,
           getWatchListMovies: this.getWatchListMovies,
           toggleLoginModal: this.toggleLoginModal,
@@ -227,14 +186,10 @@ export default class App extends React.Component {
                 />
               </div>
             </div>
-            <Modal
-              isOpen={this.state.showLoginModal}
-              toggle={this.toggleLoginModal}
-            >
-              <ModalBody>
-                <LoginForm />
-              </ModalBody>
-            </Modal>
+            <LoginModal
+              showLoginModal={this.state.showLoginModal}
+              toggleLoginModal={this.toggleLoginModal}
+            />
           </div>
         </>
       </AppContext.Provider>

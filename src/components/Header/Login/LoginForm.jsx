@@ -19,7 +19,7 @@ class LoginForm extends React.Component {
 
   static propTypes = {
     updateUser: PropTypes.func.isRequired,
-    updateSessionID: PropTypes.func.isRequired,
+    updateSessionId: PropTypes.func.isRequired,
   };
 
   onChange = (e) => {
@@ -82,21 +82,6 @@ class LoginForm extends React.Component {
             request_token: data.request_token,
           },
         });
-        // fetchApi(
-        //   `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`,
-        //   {
-        //     method: 'POST',
-        //     mode: 'cors',
-        //     headers: {
-        //       'Content-type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //       username: this.state.username,
-        //       password: this.state.password,
-        //       request_token: data.request_token,
-        //     }),
-        //   }
-        // );
       })
       .then((data) => {
         return CallApi.post('/authentication/session/new', {
@@ -104,30 +89,14 @@ class LoginForm extends React.Component {
             request_token: data.request_token,
           },
         });
-        //  fetchApi(
-        //   `${API_URL}/authentication/session/new?api_key=${API_KEY_3}`,
-        //   {
-        //     method: 'POST',
-        //     mode: 'cors',
-        //     headers: {
-        //       'Content-type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //       request_token: data.request_token,
-        //     }),
-        //   }
-        // );
       })
       .then((data) => {
-        this.props.updateSessionID(data.session_id);
+        this.props.updateSessionId(data.session_id);
         return CallApi.get('/account', {
           params: {
             session_id: data.session_id,
           },
         });
-        // fetchApi(
-        //   `${API_URL}/account?api_key=${API_KEY_3}&session_id=${data.session_id}`
-        // );
       })
       .then((user) => {
         this.setState(
@@ -137,13 +106,10 @@ class LoginForm extends React.Component {
           () => {
             this.props.updateUser(user);
             this.props.toggleLoginModal();
-            this.props.getFavoriteMovies();
-            this.props.getWatchListMovies();
           }
         );
       })
       .catch((error) => {
-        console.log('error', error);
         this.setState({
           submitting: false,
           errors: {

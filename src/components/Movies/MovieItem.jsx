@@ -1,6 +1,6 @@
 import React from 'react';
-import StarBtn from '../UIComponents/StarBtn';
-import BookmarkBtn from '../UIComponents/BookmarkBtn';
+import MovieFavoriteIcon from './MovieFavoriteIcon';
+import MovieWatchlistIcon from './MovieWatchlistIcon';
 
 class MovieItem extends React.PureComponent {
   render() {
@@ -26,8 +26,8 @@ class MovieItem extends React.PureComponent {
               <div className="card-text">Rating: {item.vote_average}</div>
             </div>
             <div className="col align-self-end card-body">
-              <StarBtn item={item} />
-              <BookmarkBtn item={item} />
+              <MovieFavoriteIcon item={item} movieId={item.id} />
+              <MovieWatchlistIcon item={item} movieId={item.id} />
             </div>
           </div>
         </div>
