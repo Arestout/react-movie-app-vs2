@@ -13,11 +13,11 @@ class MovieWatchlistIcon extends Component {
   }
 
   toggleWatchlistMovies = () => {
-    const { movieId, user, session_id, getWatchListMovies } = this.props;
+    const { movie, user, session_id, getWatchListMovies } = this.props;
 
     const queryStringParams = {
       media_type: 'movie',
-      media_id: movieId,
+      media_id: movie.id,
       watchlist: !this.isFavorite(),
     };
 
@@ -46,7 +46,7 @@ class MovieWatchlistIcon extends Component {
 
   isFavorite = () =>
     this.props.watchListMovies.some(
-      (watchListMovie) => watchListMovie.id === this.props.movieId
+      (watchListMovie) => watchListMovie.id === this.props.movie.id
     );
 
   handleClick = () => {

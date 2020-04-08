@@ -13,11 +13,11 @@ class MovieFavoriteIcon extends Component {
   }
 
   toggleFavorites = () => {
-    const { movieId, user, session_id, getFavoriteMovies } = this.props;
+    const { movie, user, session_id, getFavoriteMovies } = this.props;
 
     const queryStringParams = {
       media_type: 'movie',
-      media_id: movieId,
+      media_id: movie.id,
       favorite: !this.isFavorite(),
     };
 
@@ -46,7 +46,7 @@ class MovieFavoriteIcon extends Component {
 
   isFavorite = () =>
     this.props.favoriteMovies.some(
-      (favoriteMovie) => favoriteMovie.id === this.props.movieId
+      (favoriteMovie) => favoriteMovie.id === this.props.movie.id
     );
 
   handleClick = () => {

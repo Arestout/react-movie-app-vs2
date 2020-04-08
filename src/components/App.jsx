@@ -1,11 +1,12 @@
 import React from 'react';
 import Header from './Header/Header';
-import Filters from './Filters/Filters';
-import MoviesList from './Movies/MoviesList';
 import { API_URL, API_KEY_3, fetchApi } from '../api/api';
 import Cookies from 'universal-cookie';
 import CallApi from '../api/api';
 import LoginModal from './Header/Login/LoginModal';
+import MoviesPage from './pages/MoviesPage/MoviesPage';
+import MoviePage from './pages/MoviePage/MoviePage';
+import { BrowserRouter, Route, Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 export const AppContext = React.createContext();
@@ -18,13 +19,6 @@ export default class App extends React.Component {
       session_id: null,
       favoriteMovies: [],
       watchListMovies: [],
-      filters: {
-        sort_by: 'popularity.desc',
-        year: 'default',
-        with_genres: [],
-      },
-      page: 1,
-      total_pages: null,
       showLoginModal: false,
     };
 
@@ -54,23 +48,6 @@ export default class App extends React.Component {
     });
     this.setState({
       session_id,
-    });
-  };
-
-  onChangeFilters = (event) => {
-    const { name, value } = event.target;
-    this.setState((state) => ({
-      filters: {
-        ...state.filters,
-        [name]: value,
-      },
-    }));
-  };
-
-  onChangePagination = ({ page, total_pages = this.state.total_pages }) => {
-    this.setState({
-      page,
-      total_pages,
     });
   };
 
@@ -134,65 +111,34 @@ export default class App extends React.Component {
   };
 
   render() {
-    const {
-      filters,
-      page,
-      total_pages,
-      user,
-      session_id,
-      favoriteMovies,
-      watchListMovies,
-    } = this.state;
+    const { user, session_id, favoriteMovies, watchListMovies } = this.state;
     return (
-      <AppContext.Provider
-        value={{
-          user: user,
-          session_id: session_id,
-          updateUser: this.updateUser,
-          updateSessionId: this.updateSessionId,
-          onLogOut: this.onLogOut,
-          favoriteMovies: favoriteMovies,
-          watchListMovies: watchListMovies,
-          getFavoriteMovies: this.getFavoriteMovies,
-          getWatchListMovies: this.getWatchListMovies,
-          toggleLoginModal: this.toggleLoginModal,
-        }}
-      >
-        <>
-          <Header />
-          <div className="container">
-            <div className="row mt-4">
-              <div className="col-4">
-                <div className="card">
-                  <div className="card-body">
-                    <h3>Filters:</h3>
-                    <Filters
-                      filters={filters}
-                      page={page}
-                      total_pages={total_pages}
-                      onChangeFilters={this.onChangeFilters}
-                      onChangePagination={this.onChangePagination}
-                      resetFilters={this.resetFilters}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="col-8">
-                <MoviesList
-                  filters={filters}
-                  page={page}
-                  session_id={session_id}
-                  onChangePagination={this.onChangePagination}
-                />
-              </div>
-            </div>
+      <BrowserRouter>
+        <AppContext.Provider
+          value={{
+            user: user,
+            session_id: session_id,
+            updateUser: this.updateUser,
+            updateSessionId: this.updateSessionId,
+            onLogOut: this.onLogOut,
+            favoriteMovies: favoriteMovies,
+            watchListMovies: watchListMovies,
+            getFavoriteMovies: this.getFavoriteMovies,
+            getWatchListMovies: this.getWatchListMovies,
+            toggleLoginModal: this.toggleLoginModal,
+          }}
+        >
+          <>
+            <Header />
+            <Route exact path="/" component={MoviesPage} />
+            <Route path="/movie/:id/" component={MoviePage} />
             <LoginModal
               showLoginModal={this.state.showLoginModal}
               toggleLoginModal={this.toggleLoginModal}
             />
-          </div>
-        </>
-      </AppContext.Provider>
+          </>
+        </AppContext.Provider>
+      </BrowserRouter>
     );
   }
 }

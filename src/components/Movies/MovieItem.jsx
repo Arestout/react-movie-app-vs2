@@ -1,12 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import MovieFavoriteIcon from './MovieFavoriteIcon';
 import MovieWatchlistIcon from './MovieWatchlistIcon';
 
 class MovieItem extends React.PureComponent {
   render() {
-    const { item } = this.props;
+    const { movie } = this.props;
 
-    const imagePath = item.backdrop_path || item.image_path;
+    const imagePath = movie.backdrop_path || movie.image_path;
 
     return (
       <div className="card">
@@ -22,12 +23,14 @@ class MovieItem extends React.PureComponent {
         <div className="container">
           <div className="row row-cols-2">
             <div className="col card-body">
-              <h6 className="card-title">{item.title}</h6>
-              <div className="card-text">Rating: {item.vote_average}</div>
+              <Link className="card-title" to={`/movie/${movie.id}/details`}>
+                {movie.title}
+              </Link>
+              <div className="card-text">Rating: {movie.vote_average}</div>
             </div>
             <div className="col align-self-end card-body">
-              <MovieFavoriteIcon item={item} movieId={item.id} />
-              <MovieWatchlistIcon item={item} movieId={item.id} />
+              <MovieFavoriteIcon movie={movie} />
+              <MovieWatchlistIcon movie={movie} />
             </div>
           </div>
         </div>
