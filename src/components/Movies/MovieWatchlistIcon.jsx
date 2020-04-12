@@ -12,6 +12,12 @@ class MovieWatchlistIcon extends Component {
     };
   }
 
+  updateLoading = (value) => {
+    this.setState({
+      isLoading: value,
+    });
+  };
+
   toggleWatchlistMovies = () => {
     const { movie, user, session_id, getWatchListMovies } = this.props;
 
@@ -21,9 +27,7 @@ class MovieWatchlistIcon extends Component {
       watchlist: !this.isFavorite(),
     };
 
-    this.setState({
-      isLoading: true,
-    });
+    this.updateLoading(true);
 
     CallApi.post(`/account/${user.id}/watchlist`, {
       params: {
@@ -37,11 +41,7 @@ class MovieWatchlistIcon extends Component {
           user,
         })
       )
-      .then(() =>
-        this.setState({
-          isLoading: false,
-        })
-      );
+      .then(() => this.updateLoading(false));
   };
 
   isFavorite = () =>

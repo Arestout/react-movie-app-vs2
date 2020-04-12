@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 export default class MovieDetails extends Component {
   render() {
     const { movie } = this.props;
+
     return (
       <div className="container mt-3">
         <div className="row mb-3">

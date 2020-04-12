@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import CallApi from '../../../api/api';
-import MovieFavoriteIcon from '../../Movies/MovieFavoriteIcon';
-import MovieWatchlistIcon from '../../Movies/MovieWatchlistIcon';
 import MovieTabs from './MovieTabs';
 import MovieDetails from './MovieDetails';
 import MovieVideos from './MovieVideos';
 import MovieCredits from './MovieCredits';
+import MoviePreview from './MoviePreview';
+import LoaderSpinner from '../../UIComponents/LoaderSpinner';
+import { TabContent, TabPane } from 'reactstrap';
 
 export default class MoviePage extends Component {
   constructor() {
@@ -14,63 +15,55 @@ export default class MoviePage extends Component {
 
     this.state = {
       movie: {},
-      videos: [],
       isLoading: false,
     };
   }
 
-  componentDidMount() {
+  updateLoading = (value) => {
     this.setState({
-      isLoading: true,
+      isLoading: value,
     });
-    CallApi.get(`/movie/${this.props.match.params.id}`).then((data) =>
-      this.setState({
-        movie: data,
-        isLoading: false,
-      })
-    );
-    CallApi.get(`/movie/${this.props.match.params.id}/videos`).then((data) =>
-      this.setState({
-        videos: data.results,
-      })
-    );
+  };
+
+  updateMovies = (value) => {
+    this.setState({
+      movie: value,
+    });
+  };
+
+  componentDidMount() {
+    this.updateLoading(true);
+    CallApi.get(`/movie/${this.props.match.params.id}`).then((data) => {
+      this.updateMovies(data);
+      this.updateLoading(false);
+    });
   }
 
   render() {
-    const { movie, videos } = this.state;
-    const imagePath = movie.poster_path || movie.backdrop_path;
-    return (
+    const { movie, isLoading } = this.state;
+
+    return isLoading ? (
+      <LoaderSpinner />
+    ) : (
       <div className="container">
-        <div className="row ml-5 mt-5">
-          <div className="col-4">
-            <img
-              className="rounded movie-page-image"
-              src={`https://image.tmdb.org/t/p/w500${imagePath}`}
-              alt=""
-            />
-          </div>
-          <div className="col-8">
-            <h2 className="title mb-4">{movie.title}</h2>
-            <p className="mb-4">{movie.overview}</p>
-            <p className="mb-4">Rating: {movie.vote_average}</p>
-            <div className="card-body">
-              <MovieFavoriteIcon movie={movie} />
-              <MovieWatchlistIcon movie={movie} />
-            </div>
-          </div>
-        </div>
+        <MoviePreview movie={movie} />
         <div className="row ml-5 mt-5">
           <div className="col-12">
-            <MovieTabs movie={movie} videos={videos} />
-            <div className="tab-content">
-              <Switch>
-                <Route path="/movie/:id/details">
-                  <MovieDetails movie={movie} />
-                </Route>
-                <Route path="/movie/:id/videos" component={MovieVideos} />
-                <Route path="/movie/:id/credits" component={MovieCredits} />
-              </Switch>
-            </div>
+            <MovieTabs />
+            <TabContent>
+              <TabPane>
+                <Switch>
+                  <Route path="/movie/:id/details">
+                    <MovieDetails movie={movie} />
+                  </Route>
+                  <Route path="/movie/:id/videos" component={MovieVideos} />
+                  <Route path="/movie/:id/credits" component={MovieCredits} />
+                  <Redirect
+                    to={`/movie/${this.props.match.params.id}/details`}
+                  />
+                </Switch>
+              </TabPane>
+            </TabContent>
           </div>
         </div>
       </div>

@@ -12,6 +12,12 @@ class MovieFavoriteIcon extends Component {
     };
   }
 
+  updateLoading = (value) => {
+    this.setState({
+      isLoading: value,
+    });
+  };
+
   toggleFavorites = () => {
     const { movie, user, session_id, getFavoriteMovies } = this.props;
 
@@ -21,9 +27,7 @@ class MovieFavoriteIcon extends Component {
       favorite: !this.isFavorite(),
     };
 
-    this.setState({
-      isLoading: true,
-    });
+    this.updateLoading(true);
 
     CallApi.post(`/account/${user.id}/favorite`, {
       params: {
@@ -37,11 +41,7 @@ class MovieFavoriteIcon extends Component {
           user,
         })
       )
-      .then(() =>
-        this.setState({
-          isLoading: false,
-        })
-      );
+      .then(() => this.updateLoading(false));
   };
 
   isFavorite = () =>

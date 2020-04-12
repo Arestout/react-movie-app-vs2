@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import CallApi from '../../../api/api';
+import LoaderSpinner from '../../UIComponents/LoaderSpinner';
+import Image from '../../UIComponents/Image';
 
 export default class MovieCredits extends Component {
   constructor() {
@@ -11,23 +13,31 @@ export default class MovieCredits extends Component {
     };
   }
 
-  componentDidMount() {
+  updateLoading = (value) => {
     this.setState({
-      isLoading: true,
+      isLoading: value,
     });
-    CallApi.get(`/movie/${this.props.match.params.id}/credits`).then((data) =>
-      this.setState({
-        credits: data.cast,
-        isLoading: false,
-      })
-    );
+  };
+
+  updateCredits = (value) => {
+    this.setState({
+      credits: value,
+    });
+  };
+
+  componentDidMount() {
+    this.updateLoading(true);
+    CallApi.get(`/movie/${this.props.match.params.id}/credits`).then((data) => {
+      this.updateCredits(data.cast);
+      this.updateLoading(false);
+    });
   }
 
   render() {
     const { credits, isLoading } = this.state;
 
     return isLoading ? (
-      <div>Loading...</div>
+      <LoaderSpinner />
     ) : (
       <div className="container mt-4">
         <div className="row">
@@ -35,8 +45,8 @@ export default class MovieCredits extends Component {
             credits.map((actor) => (
               <div key={actor.id} className="col-2 mb-2">
                 <figure className="figure">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500/${actor.profile_path}`}
+                  <Image
+                    imagePath={actor.profile_path}
                     className="figure-img img-fluid rounded movie-page-image"
                     alt={actor.name}
                   />
