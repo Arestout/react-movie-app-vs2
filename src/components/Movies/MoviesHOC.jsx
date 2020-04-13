@@ -1,6 +1,7 @@
 import React from 'react';
 import { isEqual } from 'lodash';
 import CallApi from '../../api/api';
+import LoaderSpinner from '../UIComponents/LoaderSpinner';
 
 export default (Component) =>
   class MoviesHOC extends React.Component {
@@ -64,7 +65,7 @@ export default (Component) =>
       if (isLoading) {
         return (
           <div className="row">
-            <h3>Loading...</h3>
+            <LoaderSpinner />
           </div>
         );
       }

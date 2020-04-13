@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import CallApi from '../../../api/api';
-import YouTube from 'react-youtube';
 import LoaderSpinner from '../../UIComponents/LoaderSpinner';
 
 export default class MovieVideos extends Component {
