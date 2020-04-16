@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CallApi from '../../../api/api';
-import LoaderSpinner from '../../UIComponents/LoaderSpinner';
+import { LoaderSpinner } from '../../UIComponents/LoaderSpinner';
 import Image from '../../UIComponents/Image';
 
 export default class MovieCredits extends Component {
@@ -8,7 +8,7 @@ export default class MovieCredits extends Component {
     super();
 
     this.state = {
-      credits: null,
+      credits: [],
       isLoading: false,
     };
   }
@@ -36,12 +36,14 @@ export default class MovieCredits extends Component {
   render() {
     const { credits, isLoading } = this.state;
 
-    return isLoading ? (
-      <LoaderSpinner />
-    ) : (
+    if (isLoading) {
+      return <LoaderSpinner />;
+    }
+
+    return (
       <div className="container mt-4">
         <div className="row">
-          {credits &&
+          {credits.length ? (
             credits.map((actor) => (
               <div key={actor.id} className="col-2 mb-2">
                 <figure className="figure">
@@ -55,7 +57,10 @@ export default class MovieCredits extends Component {
                   </figcaption>
                 </figure>
               </div>
-            ))}
+            ))
+          ) : (
+            <p>No Credits</p>
+          )}
         </div>
       </div>
     );

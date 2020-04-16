@@ -1,7 +1,7 @@
 import React from 'react';
 import { isEqual } from 'lodash';
 import CallApi from '../../api/api';
-import LoaderSpinner from '../UIComponents/LoaderSpinner';
+import { LoaderSpinner } from '../UIComponents/LoaderSpinner';
 
 export default (Component) =>
   class MoviesHOC extends React.Component {

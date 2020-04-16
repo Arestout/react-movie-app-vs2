@@ -6,7 +6,7 @@ import MovieDetails from './MovieDetails';
 import MovieVideos from './MovieVideos';
 import MovieCredits from './MovieCredits';
 import MoviePreview from './MoviePreview';
-import LoaderSpinner from '../../UIComponents/LoaderSpinner';
+import { LoaderSpinner } from '../../UIComponents/LoaderSpinner';
 import { TabContent, TabPane } from 'reactstrap';
 
 export default class MoviePage extends Component {
@@ -42,13 +42,15 @@ export default class MoviePage extends Component {
   render() {
     const { movie, isLoading } = this.state;
 
-    return isLoading ? (
-      <LoaderSpinner />
-    ) : (
+    if (isLoading) {
+      return <LoaderSpinner />;
+    }
+
+    return (
       <div className="container">
         <MoviePreview movie={movie} />
         <div className="row ml-5 mt-5">
-          <div className="col-12">
+          <div className="col-12 loader">
             <MovieTabs />
             <TabContent>
               <TabPane>

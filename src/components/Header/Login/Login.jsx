@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Modal, ModalBody } from 'reactstrap';
-import LoginForm from './LoginForm';
 
 export default class Login extends Component {
   constructor() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
 
-const LoaderSpinner = () => (
+export const LoaderSpinner = () => (
   <div className="loader-box">
     <Loader
       type="Grid"
@@ -12,5 +12,3 @@ const LoaderSpinner = () => (
     />
   </div>
 );
-
-export default LoaderSpinner;

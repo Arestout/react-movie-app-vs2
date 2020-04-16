@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import CallApi from '../../../api/api';
-import LoaderSpinner from '../../UIComponents/LoaderSpinner';
+import { LoaderSpinner } from '../../UIComponents/LoaderSpinner';
 
 export default class MovieVideos extends Component {
   constructor() {
     super();
 
     this.state = {
-      videos: null,
+      videos: [],
       isLoading: false,
     };
   }
@@ -23,6 +23,11 @@ export default class MovieVideos extends Component {
       videos: value,
     });
   };
+
+  getUrlBySite = (video) =>
+    video.site === 'YouTube'
+      ? `https://www.youtube.com/embed/${video.key}`
+      : `https://player.vimeo.com/video/${video.key}?title=0&byline=0&portrait=0&badge=0`;
 
   componentDidMount() {
     this.updateLoading(true);
@@ -40,29 +45,26 @@ export default class MovieVideos extends Component {
     ) : (
       <div className="container mt-3">
         <div className="row mb-3">
-          {videos &&
+          {videos.length ? (
             videos.map((video) => (
               <div className="col-6 mb-3" key={video.id}>
                 <iframe
                   className="tabs-box"
                   width="560"
                   height="315"
-                  src={
-                    video.site === 'YouTube'
-                      ? `https://www.youtube.com/embed/${video.key}`
-                      : `https://player.vimeo.com/video/${video.key}?title=0&byline=0&portrait=0&badge=0`
-                  }
+                  src={this.getUrlBySite(video)}
                   frameBorder="0"
                   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   title={video.name}
                 ></iframe>
               </div>
-            ))}
+            ))
+          ) : (
+            <p>No Videos</p>
+          )}
         </div>
       </div>
     );
   }
 }
-
-// || https://player.vimeo.com/video/${video.key}?title=0&byline=0&portrait=0&badge=0
