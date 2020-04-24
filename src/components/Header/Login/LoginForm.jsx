@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CallApi from '../../../api/api';
 import UIInput from '../../UIComponents/UIInput';
-import AppContextHOC from '../../HOC/AppContextHOC';
+import { withAuth } from '../../../hoc/withAuth';
 
 class LoginForm extends React.Component {
   constructor() {
@@ -16,11 +16,6 @@ class LoginForm extends React.Component {
       submitting: false,
     };
   }
-
-  static propTypes = {
-    updateUser: PropTypes.func.isRequired,
-    updateSessionId: PropTypes.func.isRequired,
-  };
 
   onChange = (e) => {
     const name = e.target.name;
@@ -73,6 +68,7 @@ class LoginForm extends React.Component {
     this.setState({
       submitting: true,
     });
+    let session_id = null;
     CallApi.get('/authentication/token/new')
       .then((data) => {
         return CallApi.post('/authentication/token/validate_with_login', {
@@ -91,7 +87,7 @@ class LoginForm extends React.Component {
         });
       })
       .then((data) => {
-        this.props.updateSessionId(data.session_id);
+        session_id = data.session_id;
         return CallApi.get('/account', {
           params: {
             session_id: data.session_id,
@@ -104,8 +100,8 @@ class LoginForm extends React.Component {
             submitting: false,
           },
           () => {
-            this.props.updateUser(user);
-            this.props.toggleLoginModal();
+            this.props.authActions.updateAuth({ user, session_id });
+            this.props.authActions.toggleLoginModal();
           }
         );
       })
@@ -199,4 +195,4 @@ class LoginForm extends React.Component {
   }
 }
 
-export default AppContextHOC(LoginForm);
+export default withAuth(LoginForm);

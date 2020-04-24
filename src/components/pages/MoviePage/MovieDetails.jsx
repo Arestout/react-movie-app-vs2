@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
 
+const getReleaseDate = (releaseDate) =>
+  new Date(releaseDate).toLocaleDateString();
+
+const getFormattedAmount = (amount) =>
+  amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+const getMappedItems = (items) => items.map((item) => item.name).join(', ');
+
+const getLanguage = (language) => (language === 'en' ? 'English' : language);
+
 export default class MovieDetails extends Component {
   render() {
     const { movie } = this.props;
@@ -12,9 +22,7 @@ export default class MovieDetails extends Component {
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Release date</div>
-          <div className="col-8">
-            {new Date(movie.release_date).toLocaleDateString()}
-          </div>
+          <div className="col-8">{getReleaseDate(movie.release_date)}</div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Runtime</div>
@@ -22,59 +30,38 @@ export default class MovieDetails extends Component {
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Original Language</div>
-          <div className="col-8">
-            {movie.original_language === 'en'
-              ? 'English'
-              : movie.original_language}
-          </div>
+          <div className="col-8">{getLanguage(movie.original_language)}</div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Production Countries</div>
           <div className="col-8">
             {movie.production_countries &&
-              movie.production_countries.length > 0 &&
-              movie.production_countries
-                .map((country) => country.name)
-                .join(', ')}
+              getMappedItems(movie.production_countries)}
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Budget</div>
           <div className="col-8">
-            {movie.budget &&
-              movie.budget
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}{' '}
-            $
+            {movie.budget && getFormattedAmount(movie.budget)} $
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Revenue</div>
           <div className="col-8">
-            {movie &&
-              movie.revenue &&
-              movie.revenue
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}{' '}
-            $
+            {movie && movie.revenue && getFormattedAmount(movie.revenue)} $
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Production companies</div>
           <div className="col-8">
             {movie.production_companies &&
-              movie.production_companies.length > 0 &&
-              movie.production_companies
-                .map((company) => company.name)
-                .join(', ')}
+              getMappedItems(movie.production_companies)}
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-4 bold">Genres</div>
           <div className="col-8">
-            {movie.genres &&
-              movie.genres.length > 0 &&
-              movie.genres.map((company) => company.name).join(', ')}
+            {movie.genres && getMappedItems(movie.genres)}
           </div>
         </div>
       </div>

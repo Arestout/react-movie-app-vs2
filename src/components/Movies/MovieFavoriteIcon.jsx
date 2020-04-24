@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AppContextHOC from '../HOC/AppContextHOC';
+import { withAuth } from '../../hoc/withAuth';
 import { StarBorder, Star } from '@material-ui/icons';
 import CallApi from '../../api/api';
 
@@ -19,7 +19,7 @@ class MovieFavoriteIcon extends Component {
   };
 
   toggleFavorites = () => {
-    const { movie, user, session_id, getFavoriteMovies } = this.props;
+    const { movie, auth, authActions } = this.props;
 
     const queryStringParams = {
       media_type: 'movie',
@@ -29,35 +29,37 @@ class MovieFavoriteIcon extends Component {
 
     this.updateLoading(true);
 
-    CallApi.post(`/account/${user.id}/favorite`, {
+    CallApi.post(`/account/${auth.user.id}/favorite`, {
       params: {
-        session_id: session_id,
+        session_id: auth.session_id,
       },
       body: queryStringParams,
     })
       .then(() =>
-        getFavoriteMovies({
-          session_id,
-          user,
+        authActions.fetchFavoriteMovies({
+          session_id: auth.session_id,
+          user: auth.user,
         })
       )
       .then(() => this.updateLoading(false));
   };
 
   isFavorite = () =>
-    this.props.favoriteMovies.some(
+    this.props.auth.favoriteMovies.some(
       (favoriteMovie) => favoriteMovie.id === this.props.movie.id
     );
 
   handleClick = () => {
-    if (this.props.session_id) {
+    if (this.props.auth.session_id) {
       this.toggleFavorites();
     } else {
-      this.props.toggleLoginModal();
+      this.props.authActions.toggleLoginModal();
     }
   };
 
   render() {
+    const { auth } = this.props;
+
     return (
       <button
         type="button"
@@ -71,4 +73,4 @@ class MovieFavoriteIcon extends Component {
   }
 }
 
-export default AppContextHOC(MovieFavoriteIcon);
+export default withAuth(MovieFavoriteIcon);

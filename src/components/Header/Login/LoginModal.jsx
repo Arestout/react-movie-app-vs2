@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import LoginForm from './LoginForm';
 import { Modal, ModalBody } from 'reactstrap';
+import { withAuth } from '../../../hoc/withAuth';
 
-export default class LoginModal extends Component {
+class LoginModal extends Component {
   render() {
+    const { auth, authActions } = this.props;
     return (
-      <Modal
-        isOpen={this.props.showLoginModal}
-        toggle={this.props.toggleLoginModal}
-      >
+      <Modal isOpen={auth.showLoginModal} toggle={authActions.toggleLoginModal}>
         <ModalBody>
           <LoginForm />
         </ModalBody>
@@ -16,3 +15,5 @@ export default class LoginModal extends Component {
     );
   }
 }
+
+export default withAuth(LoginModal);

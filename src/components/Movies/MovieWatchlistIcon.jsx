@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AppContextHOC from '../HOC/AppContextHOC';
+import { withAuth } from '../../hoc/withAuth';
 import { Bookmark, BookmarkBorder } from '@material-ui/icons';
 import CallApi from '../../api/api';
 
@@ -19,7 +19,7 @@ class MovieWatchlistIcon extends Component {
   };
 
   toggleWatchlistMovies = () => {
-    const { movie, user, session_id, getWatchListMovies } = this.props;
+    const { movie, auth, authActions } = this.props;
 
     const queryStringParams = {
       media_type: 'movie',
@@ -29,28 +29,28 @@ class MovieWatchlistIcon extends Component {
 
     this.updateLoading(true);
 
-    CallApi.post(`/account/${user.id}/watchlist`, {
+    CallApi.post(`/account/${auth.user.id}/watchlist`, {
       params: {
-        session_id: session_id,
+        session_id: auth.session_id,
       },
       body: queryStringParams,
     })
       .then(() =>
-        getWatchListMovies({
-          session_id,
-          user,
+        authActions.fetchWatchListMovies({
+          session_id: auth.session_id,
+          user: auth.user,
         })
       )
       .then(() => this.updateLoading(false));
   };
 
   isFavorite = () =>
-    this.props.watchListMovies.some(
+    this.props.auth.watchListMovies.some(
       (watchListMovie) => watchListMovie.id === this.props.movie.id
     );
 
   handleClick = () => {
-    if (this.props.session_id) {
+    if (this.props.auth.session_id) {
       this.toggleWatchlistMovies();
     } else {
       this.props.toggleLoginModal();
@@ -58,6 +58,7 @@ class MovieWatchlistIcon extends Component {
   };
 
   render() {
+    const { auth } = this.props;
     return (
       <button
         type="button"
@@ -71,4 +72,4 @@ class MovieWatchlistIcon extends Component {
   }
 }
 
-export default AppContextHOC(MovieWatchlistIcon);
+export default withAuth(MovieWatchlistIcon);

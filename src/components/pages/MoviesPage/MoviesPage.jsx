@@ -1,7 +1,6 @@
 import React from 'react';
 import Filters from '../../Filters/Filters';
 import MoviesList from '../../Movies/MoviesList';
-import AppContextHOC from '../../HOC/AppContextHOC';
 
 class MoviesPage extends React.Component {
   constructor() {
@@ -35,12 +34,6 @@ class MoviesPage extends React.Component {
       page,
       total_pages,
     });
-  };
-
-  toggleLoginModal = () => {
-    this.setState((state) => ({
-      showLoginModal: !state.showLoginModal,
-    }));
   };
 
   resetFilters = () => {
@@ -80,4 +73,4 @@ class MoviesPage extends React.Component {
   }
 }
 
-export default AppContextHOC(MoviesPage);
+export default MoviesPage;
